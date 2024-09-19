@@ -1,6 +1,6 @@
 spring:
   application:
-    name: user-service
+    name: catalog-service
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa
@@ -9,6 +9,11 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+    generate-ddl: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
   h2:
     console:
       enabled: true
@@ -28,7 +33,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
-## 8761??? ??? ??? ??? ?? ??? ??
-
-greeting:
-  message: Welcome to the Simple E-commerce
+logging:
+  level:
+    com.example.catalogservice: DEBUG
