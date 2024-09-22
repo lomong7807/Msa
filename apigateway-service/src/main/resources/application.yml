@@ -38,6 +38,7 @@ spring:
             filters:
               - RemoveRequestHeader=Cookie
               - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+              - AuthorizationHeaderFilter
           - id : catalog-service
             uri : lb://CATALOG-SERVICE
             predicates:
@@ -77,3 +78,6 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+token:
+  secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==
