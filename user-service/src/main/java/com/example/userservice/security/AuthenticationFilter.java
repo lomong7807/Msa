@@ -68,6 +68,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String userName = ((User)authResult.getPrincipal()).getUsername();
         UserDto userDetails = userService.getUserByDetailsByEmail(userName);
 
+        String exp = env.getProperty("token.expiration_time");
+        String secret = env.getProperty("token.secret");
         String token = Jwts.builder()
                 .setSubject(userDetails.getUserId())
                 .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expiration_time"))))
