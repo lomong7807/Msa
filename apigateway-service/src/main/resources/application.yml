@@ -1,6 +1,7 @@
 spring:
   application:
     name: apigateway-service
+
   cloud:
     gateway:
       default-filters:
@@ -39,10 +40,22 @@ spring:
               - RemoveRequestHeader=Cookie
               - RewritePath=/user-service/(?<segment>.*), /$\{segment}
               - AuthorizationHeaderFilter
+          - id: user-service
+            uri: lb://USER-SERVICE
+            predicates:
+              - Path=/user-service/actuator/**
+              - Method=GET,POST
+            filters:
+              - RemoveRequestHeader=Cookie
+              - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+
           - id : catalog-service
             uri : lb://CATALOG-SERVICE
             predicates:
               - Path=/catalog-service/**
+
+
           - id : order-service
             uri : lb://ORDER-SERVICE
             predicates:
@@ -68,6 +81,10 @@ spring:
                   baseMessage: Hi,there.
                   preLogger: true
                   postLogger: true
+    config:
+      name: ecommerce
+  config:
+    import: optional:configserver:http://localhost:8888
 
 server:
   port: 8000
@@ -78,6 +95,12 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httpexchanges
 
 token:
   secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==

@@ -1,6 +1,14 @@
 spring:
   application:
     name: user-service
+
+  cloud:
+    config:
+      name: ecommerce
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
   datasource:
     url: jdbc:h2:mem:testdb
     username: sa
@@ -38,6 +46,12 @@ logging:
   level:
     com.example.userservice: debug
 
-token:
-  expiration_time: 86300000
-  secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
+
+#token:
+#  expiration_time: 86300000
+#  secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==
