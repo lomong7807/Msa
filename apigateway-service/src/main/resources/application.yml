@@ -3,9 +3,15 @@ spring:
     name: apigateway-service
 
   profiles:
-    active: :prod
+    active: prod
+
+  config:
+    import: optional:configserver:http://localhost:8888
 
   cloud:
+    config:
+      name: ecommerce
+
     gateway:
       default-filters:
         - name: GlobalFilter
@@ -84,10 +90,7 @@ spring:
                   baseMessage: Hi,there.
                   preLogger: true
                   postLogger: true
-    config:
-      name: ecommerce
-  config:
-    import: optional:configserver:http://localhost:8888
+
 
 server:
   port: 8000
@@ -105,5 +108,5 @@ management:
       exposure:
         include: refresh, health, beans, httpexchanges
 
-token:
-  secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==
+#token:
+#  secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==
