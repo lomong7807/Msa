@@ -62,6 +62,7 @@ public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Co
                 }
             }));
         }, OrderedGatewayFilter.LOWEST_PRECEDENCE);
+        // LOWEST_PRECEDENCE는 필터의 우선 순위 설정
 
         return filter;
     }

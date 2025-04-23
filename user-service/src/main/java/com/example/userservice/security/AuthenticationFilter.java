@@ -1,11 +1,13 @@
 package com.example.userservice.security;
 
+import com.example.userservice.config.JwtConfig;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.service.UserService;
 import com.example.userservice.vo.RequestLogin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -28,13 +31,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private UserService userService;
     private Environment env;
+    private JwtConfig jwtConfig;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
                                 UserService userService,
-                                Environment env) {
+                                Environment env,
+                                JwtConfig jwtConfig) {
         super(authenticationManager);
         this.userService = userService;
         this.env = env;
+        this.jwtConfig = jwtConfig;
     }
 
     public AuthenticationFilter() {
@@ -48,11 +54,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             RequestLogin creds = new ObjectMapper().readValue(request.getInputStream(), RequestLogin.class);
 
             return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            creds.getEmail(),
-                            creds.getPassword(),
-                            new ArrayList<>()
-                    )
+                new UsernamePasswordAuthenticationToken(
+                        creds.getEmail(),
+                        creds.getPassword(),
+                        new ArrayList<>()
+                )
             );
 
         }catch (IOException e){
@@ -66,14 +72,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
         String userName = ((User)authResult.getPrincipal()).getUsername();
-        UserDto userDetails = userService.getUserByDetailsByEmail(userName);
+//        log.debug(userName);
+        UserDto userDetails = userService.getUserDetailsByEmail(userName);
+        String secretKey = jwtConfig.getSecret();
+        String exp = jwtConfig.getExpiration_time();
 
-        String exp = env.getProperty("token.expiration_time");
-        String secret = env.getProperty("token.secret");
+        log.error("successfulAuthentication start");
+        log.error("secretKey: " + secretKey);
+        log.error("exp: " + exp);
+
         String token = Jwts.builder()
                 .setSubject(userDetails.getUserId())
-                .setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty("token.expiration_time"))))
-                .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
+                .setExpiration(new Date(System.currentTimeMillis() +
+                        Long.parseLong(jwtConfig.getExpiration_time())))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
         response.addHeader("token", token);
         response.addHeader("userId", userDetails.getUserId());

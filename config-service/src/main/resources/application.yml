@@ -1,0 +1,44 @@
+# config-service application.yml
+
+spring:
+  application:
+    name: config-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+#  profiles:
+    # native: native 읽히게 됨. git.uri 는 무시됨
+    # profiles.active 를 지정하지 않게 되면 기본값으로 git 설정
+#    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:///${user.home}/Desktop/Workspace/native-file-repo
+        git:
+#          uri: file:///Users/kys/Desktop/Workspace/git-local-repo
+          uri: https://github.com/lomong7807/spring-cloud-config.git
+  # if private repository login info
+#          username: your-username
+#          password: your-password
+
+server:
+  port: 8888
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, refresh, beans, httptrace, busrefresh
+
+encrypt:
+#  key: aasdasdqweasdeasdasdasdasd0123456789
+  key-store:
+    # local location
+    location: file://${user.home}/Desktop/Workspace/keystore/apiEncryptionKey.jks
+    # docker container location
+#    location: file:/apiEncryptionKey.jks
+    password: test1234
+    alias: apiEncryptionKey

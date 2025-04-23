@@ -34,7 +34,6 @@ public class FirstServiceController {
 
     @GetMapping("/check")
     public String check(HttpServletRequest request){
-
         log.info("Server port={}", request.getServerPort());
 
         return String.format("Hi there, this is a message from the second service on PORT %s"

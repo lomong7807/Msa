@@ -1,10 +1,17 @@
-spring:
-  application:
-    name: discoveryservice
-
+# 유레카 서버가 웹 서비스의 성격으로 기동이 되는데 port 번호 설정
 server:
   port: 8761
 
+# 각각의 마이크로서비스의 이름이 설정이 되는데, 해당 서비스의 이름 설정
+spring:
+  application:
+    name: discoveryservice
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: ecommerce
+
+# 유레카 서버는 등록하돼 자기 자신은 등록하지 않는다는 설정
 eureka:
   client:
     register-with-eureka: false

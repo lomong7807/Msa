@@ -1,5 +1,7 @@
 package com.example.discoveryservice;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+import jakarta.xml.bind.SchemaOutputResolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
@@ -11,5 +13,5 @@ public class DiscoveryserviceApplication {
     public static void main(String[] args) {
         SpringApplication.run(DiscoveryserviceApplication.class, args);
     }
-
+    
 }
