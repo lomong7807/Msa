@@ -1,12 +1,16 @@
 server:
   port: 10000
+
+topic:
+  name: example-catalog-topic
+
+
 spring:
   application:
     name: order-service
-  zipkin:
-    base-url: http://localhost:9411
-    enabled: true
-  datasource:
+  kafka:
+    producer:
+      bootstrap-servers: ${BOOTSTRAP-SERVERS}
     url: jdbc:mariadb://localhost:3306/mydb
     driver-class-name: org.mariadb.jdbc.Driver
     username: root
@@ -14,30 +18,20 @@ spring:
 #    url: jdbc:h2:mem:testdb
 #    username: sa
 #    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    generate-ddl: true
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
       path: /h2-console
-
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
 
 logging:
   level:
@@ -46,16 +40,6 @@ logging:
     correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
 
 management:
-  tracing:
-    sampling:
-      probability: 1.0
-    propagation:
-      consume: B3
-      produce: B3
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-
   endpoints:
     web:
       exposure:

@@ -1,94 +1,52 @@
-# port:0은 random port
 server:
   port: 60000
+
 spring:
-  application:
-    name: user-service
-  zipkin:
-    base-url: http://localhost:9411
-    enabled: true
-#  datasource:
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password: 1234
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-#  profiles:
-#    active: dev
   cloud:
     config:
-      uri: http://localhost:8888
+      enabled: false
       name: user-service
-# spring cloud config 주소 설정
-  config:
-    import: optional:configserver:http://localhost:8888
-
-#  datasource:
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password: 1234
-#    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      dialect: org.hibernate.dialect.H2Dialect
+    openfeign:
+      loadbalancer:
+        ribbon:
+          enable: false
+  application:
+    name: user-service
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
       path: /h2-console
-
-
-eureka:
-  # 같은 이름의 서비스를 실행하게 되면 yml상 port가 같은 여러 서비스를 실행하게 되면 하나만 실행하는거처럼 보임
-  # 이를 막기 위해 random.value를 뒤에 붙여줌
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    # EUREKA 서버로부터 인스턴스들의 정보를 주기적으로 가져올 것인지를 설정하는 속성
-    # true로 설정하면, 갱신된 정보를 받겠다는 설정
-    register-with-eureka: true
-    fetch-registry: true
-    # 해당 서비스가 등록될 EUREKA 서버의 위치
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-## 8761??? ??? ??? ??? ?? ??? ??
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
 
 greeting:
-  message: Welcome to the Simple E-commerce
+  message: Welcome to the Simple E-commerce.
 
 logging:
   level:
     com.example.userservice: DEBUG
-    feign: DEBUG
   pattern:
     correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
 
 management:
-  # spring cloud 에서 남겨진 로그를 어느 정도 비율로 zipkin 에 전달할지 비율 설정 (probability: 1.0 == 100%)
-  tracing:
-    sampling:
-      probability: 1.0
-    # 데이터를 보내고 사용할 때 계층 설정
-    # 분산 시스템 환경에서 시스템 간의 트레이싱을 위해서 스펙을 정의
-    propagation:
-      consume: B3
-      produce: B3
-  # zipkin 에 각각의 로그를 직접적으로 저장을 하고자 할 때 어떤 엔드포인트를 사용하는지 설정
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-
   endpoints:
     web:
       exposure:
         include: refresh, health, beans, busrefresh, info, metrics, prometheus
 
-#token:
-#  expiration_time: 86400000
-#  secret: Gs0pGmm9NJJfGkKxqzoxXDr3E4Pp9P3qGaHRrfwFO65MoSbVmwNE99UhB8hUE8VVQX1USwV7dJHogcH6CK1VKw==
+order-service-url: ${ORDER-SERVICE-URL}
+
+gateway:
+  ip: ${GATEWAY_IP}
+
+token:
+  expiration_time: ${TOKEN_EXPIRATION_TIME}
+  secret: ${TOKEN_SECRET}

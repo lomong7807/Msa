@@ -1,40 +1,39 @@
 server:
-  port: 20000
+  port: 8080
+
+topic:
+  name: my-catalog-topic
 
 spring:
   application:
     name: catalog-service
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    generate-ddl: true
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
+  kafka:
+    consumer:
+      bootstrap-servers: ${BOOTSTRAP-SERVERS} # Kafka 클러스에 대한 초기 연결에 사용할 호스트 : 포트 목록
+      group-id: consumer_group01 # Group Id
+      auto-offset-reset: earliest
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
       path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    generate-ddl: true
+    database: h2
+    defer-datasource-initialization: true
 
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
 
-
-
-eureka:
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
 logging:
   level:
     com.example.catalogservice: DEBUG
+  pattern:
+    correlation: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
